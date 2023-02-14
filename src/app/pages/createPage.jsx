@@ -1,0 +1,97 @@
+import React, { useEffect, useState } from "react";
+import TextInput from "../components/textInput";
+import { validator } from "../utils/validator";
+import Modal from "../components/modal";
+
+const CreatePage = () => {
+    const [value, setValue] = useState({ name: "", secondName: "", date: "", portfolioUrl: "" });
+    const [errors, setErrors] = useState({});
+    const handleChange = ({ target }) => {
+        setValue((prev) => ({
+            ...prev,
+            [target.name]: target.value
+        }));
+    };
+    useEffect(() => {
+        validate();
+    }, [value]);
+
+    const validate = () => {
+        const errors = validator(value, validatorConfig);
+        setErrors(errors);
+    };
+    const validatorConfig = {
+        name: {
+            isRequired: { message: "Поле 'Имя' должго быть заполненым" },
+            isName: { message: "Поле 'Имя' введено не коректно" }
+        },
+        secondName: {
+            isRequired: { message: "Поле 'Фамилия' должго быть заполненым" },
+            issecondName: { message: "Поле 'Фамилия' введено не коректно" }
+        },
+        date: {
+            isRequired: { message: "Поле 'Год рождения' должго быть заполненым" },
+            isdate: { message: "Поле 'Год рождения' введено не коректно" }
+        },
+        portfolioUrl: {
+            isRequired: { message: "Поле 'Портфолио' должго быть заполненым" },
+            isportfolioUrl: { message: "Поле 'Портфолио' введено не коректно" }
+        }
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        localStorage.setItem("user", JSON.stringify(value));
+    };
+    return (
+        <div className='container mt-3'>
+            <div className="row">
+                <div className="col-md-6 offset-md-3">
+                    <h1>Создать</h1>
+                    <form action="" onSubmit={handleSubmit}>
+                        <TextInput
+                            name='name'
+                            label='Имя'
+                            value={value.name}
+                            onChange={handleChange}
+                            error = {errors.name}
+                        />
+                        <TextInput
+                            name='secondName'
+                            label='Фамилия'
+                            value={value.secondName}
+                            onChange={handleChange}
+                            error = {errors.secondName}
+                        />
+                        <TextInput
+                            name='date'
+                            type='number'
+                            label='Год рождения'
+                            value={value.date}
+                            onChange={handleChange}
+                            error = {errors.date}
+                        />
+                        <TextInput
+                            name='portfolioUrl'
+                            label='Портфолио'
+                            value={value.portfolioUrl}
+                            onChange={handleChange}
+                            error = {errors.portfolioUrl}
+                        />
+                        <button
+                            className='btn btn-primary'
+                            disabled={Object.keys(errors).length > 0}
+                            data-bs-toggle="modal"
+                            data-bs-target="#exampleModal"
+                        >
+                        Создать
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <Modal/>
+        </div>
+    );
+};
+
+export default CreatePage;
